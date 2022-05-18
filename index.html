@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        ul{
+            list-style: none;
+        }
+        li{
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="todoInput">
+    <button class="inputBtn">추가하기</button>
+    <ul class="todolist">
+
+    </ul>
+
+
+    <script>
+        class ToDoItem {
+            constructor(context){
+                this.finished = false;
+                this.context = context;
+                let curDay = new Date();
+                let hour = curDay.getHours();
+                let min = curDay.getMinutes();
+                let sec = curDay.getSeconds();
+                this.curDate = `${hour}시 ${min}분 ${sec}초`;
+            }
+            getToDo(){// 투두 정보
+                return this.curDate + ' ' + this.context;
+            }
+            finishTodo(){
+                this.finished = true;
+            }
+        }
+
+        class ToDoList {
+            constructor(){
+                this.todoArr = [];
+            }
+            addItem(item){//투두 추가
+                this.todoArr.push(item);
+            }
+            finishItem(idx){//투두의 완료 상태로 만듦
+                this.todoArr[idx].finishTodo();
+            }
+            getLastestTodo(){//가장 나중에 추가된 투두 반환
+                return this.todoArr[this.todoArr.length-1];
+            }
+        }
+        
+        let myTodo = new ToDoList();//투두 매니저
+        let cnt = 0;
+        let todoList = document.querySelector('.todolist');
+        let todoInput = document.querySelector('#todoInput');
+        let inputBtn = document.querySelector('.inputBtn');
+
+        inputBtn.addEventListener('click',()=>{
+            if(todoInput.value===""){alert("값을 입력해주세요"); return; }
+            let newTodo = new ToDoItem(todoInput.value);
+            myTodo.addItem(newTodo);
+            console.log(myTodo);
+            let newLi = document.createElement('li');
+            newLi.classList.add(`${cnt++}todo`)
+            newLi.innerHTML=`${myTodo.getLastestTodo().getToDo()} <button class="finishBtn">완료</button>`;
+
+            todoList.appendChild(newLi);
+        });
+
+        todoList.addEventListener('click',(e)=>{
+            if(e.target.classList.value==="finishBtn"){
+                e.target.parentNode.setAttribute('style','text-decoration: line-through;');
+                let finishIdx = e.target.parentNode.classList[0][0];
+                myTodo.finishItem(finishIdx);
+                
+                //console 확인
+                myTodo.todoArr.forEach(i=>{
+                    console.log(i);
+                })
+            }
+        })
+    </script>
+</body>
+</html>
