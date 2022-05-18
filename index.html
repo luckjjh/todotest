@@ -12,6 +12,9 @@
         li{
             margin-top: 10px;
         }
+        .fin{
+            text-decoration: line-through;
+        }
     </style>
 </head>
 <body>
@@ -33,11 +36,17 @@
                 let sec = curDay.getSeconds();
                 this.curDate = `${hour}시 ${min}분 ${sec}초`;
             }
+            getStatus(){
+                return this.finished;
+            }
             getToDo(){// 투두 정보
                 return this.curDate + ' ' + this.context;
             }
             finishTodo(){
                 this.finished = true;
+            }
+            undoFinish(){
+                this.finished = false;
             }
         }
 
@@ -51,8 +60,14 @@
             finishItem(idx){//투두의 완료 상태로 만듦
                 this.todoArr[idx].finishTodo();
             }
+            undoFinishItem(idx){
+                this.todoArr[idx].undoFinish();
+            }
             getLastestTodo(){//가장 나중에 추가된 투두 반환
                 return this.todoArr[this.todoArr.length-1];
+            }
+            getItem(idx){
+                return this.todoArr[idx];
             }
         }
         
@@ -76,14 +91,18 @@
 
         todoList.addEventListener('click',(e)=>{
             if(e.target.classList.value==="finishBtn"){
-                e.target.parentNode.setAttribute('style','text-decoration: line-through;');
                 let finishIdx = e.target.parentNode.classList[0][0];
-                myTodo.finishItem(finishIdx);
-                
+                if(myTodo.getItem(finishIdx).getStatus()===false){
+                    e.target.parentNode.classList.add('fin');
+                    myTodo.finishItem(finishIdx);
+                }else{
+                    e.target.parentNode.classList.remove('fin');
+                    myTodo.undoFinishItem(finishIdx);
+                }
                 //console 확인
                 myTodo.todoArr.forEach(i=>{
                     console.log(i);
-                })
+                });
             }
         })
     </script>
